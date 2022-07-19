@@ -1,0 +1,30 @@
+.header {
+  background-color: #222 !important;
+  height: 36px;
+  padding: 8px 32px 8px 16px;
+}
+.logo {
+  background: #ff7f7f;
+  height: 35px;
+  margin-top: 0;
+  animation: rotate 8s infinite linear;
+}
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -20px;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
