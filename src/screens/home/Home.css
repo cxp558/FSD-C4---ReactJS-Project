@@ -1,31 +1,41 @@
-.upcoming_header {
+.homeRoot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  overflow: hidden;
+}
+.homeGridList {
+  flex-wrap: nowrap !important;
+  transform: translateZ(0);
+}
+.homeUpcomingHeader {
   background-color: #ff9999;
   padding: 8px;
   font-size: 1rem;
   text-align: center;
   margin-top: 32px;
-  /* width: 100%;
-  height: 20vh; */
+  width: 100%;
 }
-
-.released_movies_container {
+.homeImg:hover {
+  cursor: pointer;
+}
+.homeGridList {
+  height: 250px !important;
+}
+.homeReleasedMoviesContainer {
   display: flex;
-  flex-direction: row;
+  width: 100%;
+}
+.homeReleasedMovies {
+  width: 76%;
   margin: 16px;
-  gap: 10px;
 }
-
-.released_movies_container_left {
-  flex: 0.76;
-  width: 100%;
-  background-color: red;
+.homeFilters {
+  width: 24%;
+  margin: 16px;
 }
-.released_movies_container_right {
-  flex: 0.24;
-  width: 100%;
-  background-color: blue;
+.homeReleasedGridListContainer {
 }
-.released_grid {
-  height: 350px;
-  width: 200px;
+.homeReleasedGrid {
+  height: 350px !important;
 }
