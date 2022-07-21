@@ -1,10 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import "./Header.css";
 
 function Header(props) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleBookShow = () => {
+    if (isLoggedIn) {
+      // go to book show page
+      props.history.push("/bookshow/2");
+    } else {
+      alert("login first");
+    }
+  };
+
   return (
     <AppBar className="header">
       <Toolbar className="toolbar">
@@ -14,15 +25,30 @@ function Header(props) {
           alt="no image"
         />
 
-        <div>
-          <Button size="small" variant="contained">
+        <div className="btns_container">
+          <Button
+            onClick={handleBookShow}
+            size="small"
+            color="primary"
+            variant="contained"
+          >
+            Book Show
+          </Button>
+          <Button
+            style={{ display: isLoggedIn ? "none" : "inline-block" }}
+            size="small"
+            variant="contained"
+            onClick={() => setIsLoggedIn(true)}
+          >
             Login
           </Button>
-          <Button size="small" variant="contained">
+          <Button
+            style={{ display: isLoggedIn ? "inline-block" : "none" }}
+            size="small"
+            variant="contained"
+            onClick={() => setIsLoggedIn(false)}
+          >
             Logout
-          </Button>
-          <Button size="small" color="primary" variant="contained">
-            Book Show
           </Button>
         </div>
       </Toolbar>
