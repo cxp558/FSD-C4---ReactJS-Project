@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import "./Header.css";
 
 function Header(props) {
+  const { showBookShow } = props;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleBookShow = () => {
@@ -26,30 +27,45 @@ function Header(props) {
         />
 
         <div className="btns_container">
-          <Button
-            onClick={handleBookShow}
-            size="small"
-            color="primary"
-            variant="contained"
-          >
-            Book Show
-          </Button>
-          <Button
-            style={{ display: isLoggedIn ? "none" : "inline-block" }}
-            size="small"
-            variant="contained"
-            onClick={() => setIsLoggedIn(true)}
-          >
-            Login
-          </Button>
-          <Button
-            style={{ display: isLoggedIn ? "inline-block" : "none" }}
-            size="small"
-            variant="contained"
-            onClick={() => setIsLoggedIn(false)}
-          >
-            Logout
-          </Button>
+          {showBookShow && (
+            <Button
+              onClick={handleBookShow}
+              size="small"
+              color="primary"
+              variant="contained"
+            >
+              Book Show
+            </Button>
+          )}
+          {isLoggedIn ? (
+            <Button
+              style={{ display: isLoggedIn ? "inline-block" : "none" }}
+              size="small"
+              variant="contained"
+              onClick={() => setIsLoggedIn(false)}
+            >
+              Logout
+            </Button>
+          ) : (
+            <div>
+              <Button
+                style={{ display: isLoggedIn ? "none" : "inline-block" }}
+                size="small"
+                variant="contained"
+                onClick={() => setIsLoggedIn(true)}
+              >
+                Login
+              </Button>
+              <Button
+                style={{ display: isLoggedIn ? "none" : "inline-block" }}
+                size="small"
+                variant="contained"
+                // onClick={() => setIsLoggedIn(true)}
+              >
+                Register
+              </Button>
+            </div>
+          )}
         </div>
       </Toolbar>
     </AppBar>
