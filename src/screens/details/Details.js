@@ -1,10 +1,43 @@
-import { Typography } from "@material-ui/core";
+import {
+  GridList,
+  GridListTile,
+  GridListTileBar,
+  Typography,
+} from "@material-ui/core";
 import { StarBorderOutlined } from "@material-ui/icons";
 import React, { useState } from "react";
 import Header from "../../common/header/Header";
 import "./Details.css";
 
-const Details = () => {
+const artists = [
+  {
+    poster_url:
+      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
+    title: "The Amazing Movie Part 1",
+    author: "author",
+  },
+  {
+    poster_url:
+      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
+    title: "The Amazing Movie Part 1",
+    author: "author",
+  },
+  {
+    poster_url:
+      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
+    title: "The Amazing Movie Part 1",
+    author: "author",
+  },
+  {
+    poster_url:
+      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
+    title: "The Amazing Movie Part 1",
+    author: "author",
+  },
+];
+
+const Details = (props) => {
+  const { history } = props;
   const movie = {
     poster_url:
       "https://m.media-amazon.com/images/I/71niXI3lxlL._AC_SY679_.jpg",
@@ -19,7 +52,9 @@ const Details = () => {
   return (
     <div>
       <Header showBookShow />
-      <Typography className="backBtn">{"<"} Back to Home</Typography>
+      <Typography className="backBtn" onClick={() => history.push("/")}>
+        {"<"} Back to Home
+      </Typography>
 
       <div className="detailsContainer">
         <div className="detailsLeft">
@@ -64,6 +99,15 @@ const Details = () => {
           <Typography className="detailsTrailer">
             <b>Artists:</b>
           </Typography>
+          {/* upcoming movies list */}
+          <GridList className="homeGridList" cols={2}>
+            {artists.map((tile) => (
+              <GridListTile key={tile.poster_url} className="homeGridList">
+                <img src={tile.poster_url} alt={tile.title} />
+                <GridListTileBar title={tile.title} />
+              </GridListTile>
+            ))}
+          </GridList>
         </div>
       </div>
     </div>

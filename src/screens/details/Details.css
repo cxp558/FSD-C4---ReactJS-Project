@@ -1,27 +1,31 @@
 .backBtn {
-  margin: 40px 0px 0px 24px !important;
+  margin: 8px 0px 0px 24px !important;
   height: 24px;
+}
+.backBtn:hover,
+.backBtn:focus {
+  cursor: pointer;
 }
 .detailsContainer {
   display: flex;
-  flex-direction: row;
-  gap: 20px;
-  /* justify-content: space-between;
-  align-items: center; */
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px;
 }
-
 .detailsLeft {
-  /* width: 20%; */
   flex: 0.2;
+  width: 100%;
 }
-j.detailsMiddle {
-  /* width: 60%; */
+.detailsMiddle {
   flex: 0.6;
+  width: 100%;
 }
 .detailsRight {
-  /* width: 20%; */
   flex: 0.2;
+  width: 100%;
 }
+
 .detailsImg {
   width: 300px;
   height: auto;
