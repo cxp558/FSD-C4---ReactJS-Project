@@ -47,24 +47,24 @@ function Header(props) {
               Logout
             </Button>
           ) : (
-            <div>
-              <Button
-                style={{ display: isLoggedIn ? "none" : "inline-block" }}
-                size="small"
-                variant="contained"
-                onClick={() => setIsLoggedIn(true)}
-              >
-                Login
-              </Button>
-              <Button
-                style={{ display: isLoggedIn ? "none" : "inline-block" }}
-                size="small"
-                variant="contained"
-                // onClick={() => setIsLoggedIn(true)}
-              >
-                Register
-              </Button>
-            </div>
+            <Button
+              style={{ display: isLoggedIn ? "none" : "inline-block" }}
+              size="small"
+              variant="contained"
+              onClick={() => setIsLoggedIn(true)}
+            >
+              Login
+            </Button>
+          )}
+          {!isLoggedIn && !showBookShow && (
+            <Button
+              style={{ display: isLoggedIn ? "none" : "inline-block" }}
+              size="small"
+              variant="contained"
+              // onClick={() => setIsLoggedIn(true)}
+            >
+              Register
+            </Button>
           )}
         </div>
       </Toolbar>

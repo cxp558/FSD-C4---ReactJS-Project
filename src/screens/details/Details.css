@@ -1,0 +1,34 @@
+.backBtn {
+  margin: 40px 0px 0px 24px !important;
+  height: 24px;
+}
+.detailsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  /* justify-content: space-between;
+  align-items: center; */
+}
+
+.detailsLeft {
+  /* width: 20%; */
+  flex: 0.2;
+}
+j.detailsMiddle {
+  /* width: 60%; */
+  flex: 0.6;
+}
+.detailsRight {
+  /* width: 20%; */
+  flex: 0.2;
+}
+.detailsImg {
+  width: 300px;
+  height: auto;
+}
+.detailsPlot {
+  margin-top: 16px !important;
+}
+.detailsTrailer {
+  margin-top: 16px !important;
+}
