@@ -13,7 +13,6 @@
   padding: 8px;
   font-size: 1rem;
   text-align: center;
-  margin-top: 32px;
   width: 100%;
 }
 .homeImg:hover {
@@ -34,8 +33,7 @@
   width: 24%;
   margin: 16px;
 }
-.homeReleasedGridListContainer {
-}
+
 .homeReleasedGrid {
   height: 350px !important;
 }

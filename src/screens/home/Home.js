@@ -132,6 +132,7 @@ const styles = (theme) => ({
 });
 
 function Home(props) {
+  const { history } = props;
   const [selectedNames, setSelectedNames] = useState([]);
   const [selectedArtists, setSelectedArtists] = useState([]);
   const { classes } = props;
@@ -148,7 +149,7 @@ function Home(props) {
       <GridList className="homeGridList" cols={6}>
         {tileData.map((tile) => (
           <GridListTile key={tile.poster_url} className="homeGridList">
-            <img className="homeImg" src={tile.poster_url} alt={tile.title} />
+            <img src={tile.poster_url} alt={tile.title} />
             <GridListTileBar title={tile.title} />
           </GridListTile>
         ))}
@@ -160,7 +161,12 @@ function Home(props) {
           <GridList className="homeReleasedGridListContainer" cols={4}>
             {releasedData.map((d) => (
               <GridListTile className="homeReleasedGrid" key={d.title}>
-                <img src={d.poster_url} className="homeImg" alt={d.title} />
+                <img
+                  onClick={() => history.push("/movie/4")}
+                  src={d.poster_url}
+                  className="homeImg"
+                  alt={d.title}
+                />
                 <GridListTileBar
                   title={d.title}
                   subtitle={<span>Released Date: {d.releasedDate}</span>}
