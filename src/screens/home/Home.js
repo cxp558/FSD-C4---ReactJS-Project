@@ -137,7 +137,7 @@ function Home(props) {
   const { classes } = props;
 
   return (
-    <div className="homeRoot">
+    <div>
       {/* header */}
       <Header />
 
