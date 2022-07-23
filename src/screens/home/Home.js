@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import GridList from "@material-ui/core/GridList";
@@ -18,90 +18,6 @@ import {
   Checkbox,
   ListItemText,
 } from "@material-ui/core";
-
-const tileData = [
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-];
-
-const releasedData = [
-  {
-    poster_url:
-      "https://m.media-amazon.com/images/I/71niXI3lxlL._AC_SY679_.jpg",
-    title: "The Amazing Movie Part 1",
-    releasedDate: "Jan 11th 2022",
-  },
-  {
-    poster_url:
-      "https://m.media-amazon.com/images/I/71niXI3lxlL._AC_SY679_.jpg",
-    title: "The Amazing Movie Part 1",
-    releasedDate: "Jan 11th 2022",
-  },
-  {
-    poster_url:
-      "https://m.media-amazon.com/images/I/71niXI3lxlL._AC_SY679_.jpg",
-    title: "The Amazing Movie Part 1",
-    releasedDate: "Jan 11th 2022",
-  },
-  {
-    poster_url:
-      "https://m.media-amazon.com/images/I/71niXI3lxlL._AC_SY679_.jpg",
-    title: "The Amazing Movie Part 1",
-    releasedDate: "Jan 11th 2022",
-  },
-  {
-    poster_url:
-      "https://m.media-amazon.com/images/I/71niXI3lxlL._AC_SY679_.jpg",
-    title: "The Amazing Movie Part 1",
-    releasedDate: "Jan 11th 2022",
-  },
-];
 
 const genres = [
   "Drama",
@@ -132,10 +48,20 @@ const styles = (theme) => ({
 });
 
 function Home(props) {
-  const { history } = props;
+  const { history, baseUrl } = props;
+  const [upcomingMovies, setUpcomingMovies] = useState([]);
   const [selectedNames, setSelectedNames] = useState([]);
   const [selectedArtists, setSelectedArtists] = useState([]);
   const { classes } = props;
+
+  useEffect(() => {
+    fetch(baseUrl + "movies/")
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response.movies);
+        setUpcomingMovies(response.movies);
+      });
+  }, []);
 
   return (
     <div>
@@ -147,10 +73,10 @@ function Home(props) {
 
       {/* upcoming movies list */}
       <GridList className="homeGridList" cols={6}>
-        {tileData.map((tile) => (
-          <GridListTile key={tile.poster_url} className="homeGridList">
-            <img src={tile.poster_url} alt={tile.title} />
-            <GridListTileBar title={tile.title} />
+        {upcomingMovies.map((movie) => (
+          <GridListTile key={movie.id} className="homeGridList">
+            <img src={movie.poster_url} alt={movie.title} />
+            <GridListTileBar title={movie.title} />
           </GridListTile>
         ))}
       </GridList>
@@ -159,17 +85,17 @@ function Home(props) {
         {/* grid of released movies */}
         <div className="homeReleasedMovies">
           <GridList className="homeReleasedGridListContainer" cols={4}>
-            {releasedData.map((d) => (
-              <GridListTile className="homeReleasedGrid" key={d.title}>
+            {upcomingMovies.map((movie) => (
+              <GridListTile className="homeReleasedGrid" key={movie.id}>
                 <img
-                  onClick={() => history.push("/movie/4")}
-                  src={d.poster_url}
+                  onClick={() => history.push("/movie/" + movie.id)}
+                  src={movie.poster_url}
                   className="homeImg"
-                  alt={d.title}
+                  alt={movie.title}
                 />
                 <GridListTileBar
-                  title={d.title}
-                  subtitle={<span>Released Date: {d.releasedDate}</span>}
+                  title={movie.title}
+                  subtitle={<span>Released Date: {movie.release_date}</span>}
                 />
               </GridListTile>
             ))}
