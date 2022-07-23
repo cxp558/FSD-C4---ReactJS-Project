@@ -19,23 +19,6 @@ import {
   ListItemText,
 } from "@material-ui/core";
 
-const genres = [
-  "Drama",
-  "Romance",
-  "Horror",
-  "Action",
-  "Crime",
-  "Thriller",
-  "Political",
-  "Social",
-  "Fantacy",
-  "Suspence",
-  "Adventure",
-  "Comedy",
-];
-
-const artists = ["Desmond Oben", "Niko Rene", "Rico gaspien", "Tizzy Panchak"];
-
 const styles = (theme) => ({
   cardHeading: {
     color: theme.palette.primary.light,
@@ -50,16 +33,33 @@ const styles = (theme) => ({
 function Home(props) {
   const { history, baseUrl } = props;
   const [upcomingMovies, setUpcomingMovies] = useState([]);
+  const [genres, setGenres] = useState([]);
+  const [artists, setArtists] = useState([]);
   const [selectedNames, setSelectedNames] = useState([]);
   const [selectedArtists, setSelectedArtists] = useState([]);
   const { classes } = props;
 
   useEffect(() => {
+    // get movies
     fetch(baseUrl + "movies/")
       .then((response) => response.json())
       .then((response) => {
-        console.log(response.movies);
+        // console.log(response.movies);
         setUpcomingMovies(response.movies);
+      });
+    // get genres
+    fetch(baseUrl + "genres/")
+      .then((response) => response.json())
+      .then((response) => {
+        // console.log(response.genres);
+        setGenres(response.genres);
+      });
+    // get artists
+    fetch(baseUrl + "artists/")
+      .then((response) => response.json())
+      .then((response) => {
+        // console.log(response.artists);
+        setArtists(response.artists);
       });
   }, []);
 
@@ -124,8 +124,8 @@ function Home(props) {
                 // renderValue={selected => selected.join(", ")}
                 // MenuProps={MenuProps}
               >
-                {genres.map((genre) => (
-                  <MenuItem key={genre} value={genre}>
+                {genres.map(({ id, genre }) => (
+                  <MenuItem key={id} value={genre}>
                     <Checkbox />
                     <ListItemText primary={genre} />
                   </MenuItem>
@@ -143,9 +143,14 @@ function Home(props) {
                 // MenuProps={MenuProps}
               >
                 {artists.map((artist) => (
-                  <MenuItem key={artist} value={artist}>
+                  <MenuItem
+                    key={artist.id}
+                    value={artist.first_name + " " + artist.last_name}
+                  >
                     <Checkbox />
-                    <ListItemText primary={artist} />
+                    <ListItemText
+                      primary={artist.first_name + " " + artist.last_name}
+                    />
                   </MenuItem>
                 ))}
               </Select>
