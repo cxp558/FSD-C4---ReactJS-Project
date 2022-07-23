@@ -36,7 +36,16 @@ function Header(props) {
   const { showBookShow, history } = props;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [email, setEmail] = useState("");
+  const [fName, setFName] = useState("");
+  const [lName, setLName] = useState("");
+  const [number, setNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [userId, setUserId] = useState(null);
+  const [username, setUsername] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const baseUrl = "/api/v1/";
 
   function handleChange(event, newValue) {
     setValue(newValue);
@@ -57,6 +66,63 @@ function Header(props) {
     } else {
       openModal();
     }
+  };
+
+  const handleRegister = () => {
+    const data = {
+      email_address: email,
+      first_name: fName,
+      last_name: lName,
+      mobile_number: number,
+      password: password,
+    };
+    // signup
+    fetch(baseUrl + "signup/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        // console.log(response)
+        setUserId(response.id);
+      });
+  };
+
+  const handleLogin = () => {
+    const data = {
+      username: username,
+      password: loginPassword,
+    };
+    sessionStorage.setItem("access-token", "YW5kcmVhczpzZWxlbndhbGw=");
+    // signin
+    fetch(baseUrl + "/auth/login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
+        Authorization: "Basic " + sessionStorage.getItem("access-token"),
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        console.log(sessionStorage.getItem("access-token"));
+      });
+  };
+
+  const checkField = (field) => {
+    return (
+      !field.trim() && (
+        <FormHelperText>
+          <span className="red">Required</span>
+        </FormHelperText>
+      )
+    );
   };
 
   return (
@@ -114,26 +180,24 @@ function Header(props) {
           {value === 0 && (
             <div className="inputContainer">
               <FormControl required>
-                <InputLabel htmlFor="email_login_input">Username *</InputLabel>
-                <Input type="email" id="email_login_input" />
-                <FormHelperText>
-                  <span className="red">Required</span>
-                </FormHelperText>
+                <InputLabel htmlFor="email_login_input">Username</InputLabel>
+                <Input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  type="email"
+                  id="email_login_input"
+                />
               </FormControl>
               <FormControl required>
-                <InputLabel htmlFor="password_login_input">
-                  Password *
-                </InputLabel>
-                <Input type="password" id="password_login_input" />
-                <FormHelperText>
-                  <span className="red">Required</span>
-                </FormHelperText>
+                <InputLabel htmlFor="password_login_input">Password</InputLabel>
+                <Input
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  type="password"
+                  id="password_login_input"
+                />
               </FormControl>
-              <Button
-                onClick={() => setIsLoggedIn(true)}
-                color="primary"
-                variant="contained"
-              >
+              <Button onClick={handleLogin} color="primary" variant="contained">
                 Login
               </Button>
             </div>
@@ -141,46 +205,59 @@ function Header(props) {
           {value === 1 && (
             <div className="inputContainer">
               <FormControl required>
-                <InputLabel htmlFor="firstname_input">First Name *</InputLabel>
-                <Input id="firstname_input" />
-                <FormHelperText>
-                  <span className="red">Required</span>
-                </FormHelperText>
+                <InputLabel htmlFor="firstname_input">First Name</InputLabel>
+                <Input
+                  value={fName}
+                  onChange={(e) => setFName(e.target.value)}
+                  id="firstname_input"
+                />
+                {checkField(fName)}
               </FormControl>
               <FormControl required>
-                <InputLabel htmlFor="lastname_input">Last Name *</InputLabel>
-                <Input id="lastname_input" />
-                <FormHelperText>
-                  <span className="red">Required</span>
-                </FormHelperText>
+                <InputLabel htmlFor="lastname_input">Last Name</InputLabel>
+                <Input
+                  value={lName}
+                  onChange={(e) => setLName(e.target.value)}
+                  id="lastname_input"
+                />
+                {checkField(lName)}
               </FormControl>
               <FormControl required>
-                <InputLabel htmlFor="email_register_input">Email *</InputLabel>
-                <Input type="email" id="email_register_input" />
-                <FormHelperText>
-                  <span className="red">Required</span>
-                </FormHelperText>
+                <InputLabel htmlFor="email_register_input">Email</InputLabel>
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  id="email_register_input"
+                />
+                {checkField(email)}
               </FormControl>
               <FormControl required>
                 <InputLabel htmlFor="password_register_input">
-                  Password *
+                  Password
                 </InputLabel>
-                <Input type="password" id="password_register_input" />
-                <FormHelperText>
-                  <span className="red">Required</span>
-                </FormHelperText>
+                <Input
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                  id="password_register_input"
+                />
+                {checkField(password)}
               </FormControl>
               <FormControl required>
                 <InputLabel htmlFor="contact_register_input">
-                  Contact No *
+                  Contact No
                 </InputLabel>
-                <Input type="number" id="contact_register_input" />
-                <FormHelperText>
-                  <span className="red">Required</span>
-                </FormHelperText>
+                <Input
+                  value={number}
+                  onChange={(e) => setNumber(e.target.value)}
+                  type="number"
+                  id="contact_register_input"
+                />
+                {checkField(number)}
               </FormControl>
               <Button
-                onClick={() => setIsLoggedIn(true)}
+                onClick={handleRegister}
                 color="primary"
                 variant="contained"
               >
