@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Modal from "react-modal";
@@ -45,7 +45,16 @@ function Header(props) {
   const [userId, setUserId] = useState(null);
   const [username, setUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [msg, setMsg] = useState("");
   const baseUrl = "/api/v1/";
+
+  useEffect(() => {
+    if (sessionStorage.getItem("access-token")) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
 
   function handleChange(event, newValue) {
     setValue(newValue);
@@ -76,20 +85,32 @@ function Header(props) {
       mobile_number: number,
       password: password,
     };
-    // signup
-    fetch(baseUrl + "signup/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response);
-        setUserId(response.id);
-      });
+    if (
+      email.trim() &&
+      fName.trim() &&
+      lName.trim() &&
+      number.trim() &&
+      password.trim()
+    ) {
+      // signup
+      fetch(baseUrl + "signup/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((response) => {
+          console.log(response);
+          if (response.id && response.status) {
+            setMsg("Registration Successful. Please Login!"); // display message
+          } else if (response.code == "USR-009") {
+            setMsg("User email already exists");
+          }
+        });
+    }
   };
 
   const handleLogin = () => {
@@ -97,8 +118,12 @@ function Header(props) {
       username: username,
       password: loginPassword,
     };
-    // encode email with base64 (test@test.com)
-    sessionStorage.setItem("access-token", "dGVzdEB0ZXN0LmNvbToxMjM0NQ==");
+    // encode email:password with base64
+    const token = Buffer.from(username + ":" + loginPassword).toString(
+      "base64"
+    );
+    sessionStorage.setItem("access-token", token);
+
     // signin
     fetch(baseUrl + "/auth/login/", {
       method: "POST",
@@ -112,7 +137,30 @@ function Header(props) {
       .then((response) => response.json())
       .then((response) => {
         console.log(response);
-        console.log("access-token", sessionStorage.getItem("access-token"));
+        if (response.id) {
+          // close modal and go to home page
+          closeModal();
+          history.push("/");
+          setIsLoggedIn(true); // set logged in to true
+        }
+      });
+  };
+
+  const handleLogout = () => {
+    // signin
+    fetch(baseUrl + "auth/logout/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
+        Authorization: "Bearer " + sessionStorage.getItem("access-token"),
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        // sessionStorage.clear(); // clear storage
+        setIsLoggedIn(false); // set logged in to true
       });
   };
 
@@ -146,7 +194,7 @@ function Header(props) {
             </Button>
           )}
           {isLoggedIn ? (
-            <Button variant="contained" onClick={handleBookShow}>
+            <Button variant="contained" onClick={handleLogout}>
               Logout
             </Button>
           ) : (
@@ -257,6 +305,7 @@ function Header(props) {
                 />
                 {checkField(number)}
               </FormControl>
+              {msg && <Typography>{msg}</Typography>}
               <Button
                 onClick={handleRegister}
                 color="primary"
