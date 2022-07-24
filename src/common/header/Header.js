@@ -87,7 +87,7 @@ function Header(props) {
     })
       .then((response) => response.json())
       .then((response) => {
-        // console.log(response)
+        console.log(response);
         setUserId(response.id);
       });
   };
@@ -97,7 +97,8 @@ function Header(props) {
       username: username,
       password: loginPassword,
     };
-    sessionStorage.setItem("access-token", "YW5kcmVhczpzZWxlbndhbGw=");
+    // encode email with base64 (test@test.com)
+    sessionStorage.setItem("access-token", "dGVzdEB0ZXN0LmNvbToxMjM0NQ==");
     // signin
     fetch(baseUrl + "/auth/login/", {
       method: "POST",
@@ -111,7 +112,7 @@ function Header(props) {
       .then((response) => response.json())
       .then((response) => {
         console.log(response);
-        console.log(sessionStorage.getItem("access-token"));
+        console.log("access-token", sessionStorage.getItem("access-token"));
       });
   };
 

@@ -13,7 +13,7 @@
   padding: 8px;
   font-size: 1rem;
   text-align: center;
-  width: 100%;
+  width: 100vw;
 }
 .homeImg:hover {
   cursor: pointer;

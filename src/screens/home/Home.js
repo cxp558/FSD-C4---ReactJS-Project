@@ -33,19 +33,32 @@ const styles = (theme) => ({
 function Home(props) {
   const { history, baseUrl } = props;
   const [upcomingMovies, setUpcomingMovies] = useState([]);
-  const [genres, setGenres] = useState([]);
+  const [releasedMovies, setReleasedMovies] = useState([]);
   const [artists, setArtists] = useState([]);
-  const [selectedNames, setSelectedNames] = useState([]);
-  const [selectedArtists, setSelectedArtists] = useState([]);
+  const [genres, setGenres] = useState([]);
+
+  const [movieName, setMovieName] = useState("");
+  const [genre, setGenre] = useState([]);
+  const [first_name, setFirst_Name] = useState("");
+  const [last_name, setLast_Name] = useState("");
   const { classes } = props;
 
   useEffect(() => {
     // get movies
-    fetch(baseUrl + "movies/")
+    fetch(baseUrl + "movies/?page=1&limit=17")
       .then((response) => response.json())
       .then((response) => {
-        // console.log(response.movies);
-        setUpcomingMovies(response.movies);
+        // console.log(response);
+        const upComingMovies = response.movies.filter(
+          (movie) => movie.status == "PUBLISHED"
+        );
+        const releasedMovies = response.movies.filter(
+          (movie) => movie.status == "RELEASED"
+        );
+        console.log(upComingMovies);
+        console.log(releasedMovies);
+        setUpcomingMovies(upComingMovies);
+        setReleasedMovies(releasedMovies);
       });
     // get genres
     fetch(baseUrl + "genres/")
@@ -59,7 +72,8 @@ function Home(props) {
       .then((response) => response.json())
       .then((response) => {
         // console.log(response.artists);
-        setArtists(response.artists);
+        // setArtists(response.artists);
+        setArtists([]);
       });
   }, []);
 
@@ -75,7 +89,11 @@ function Home(props) {
       <GridList className="homeGridList" cols={6}>
         {upcomingMovies.map((movie) => (
           <GridListTile key={movie.id} className="homeGridList">
-            <img src={movie.poster_url} alt={movie.title} />
+            <img
+              onClick={() => history.push("/movie/" + movie.id)}
+              src={movie.poster_url}
+              alt={movie.title}
+            />
             <GridListTileBar title={movie.title} />
           </GridListTile>
         ))}
@@ -85,7 +103,7 @@ function Home(props) {
         {/* grid of released movies */}
         <div className="homeReleasedMovies">
           <GridList className="homeReleasedGridListContainer" cols={4}>
-            {upcomingMovies.map((movie) => (
+            {releasedMovies.map((movie) => (
               <GridListTile className="homeReleasedGrid" key={movie.id}>
                 <img
                   onClick={() => history.push("/movie/" + movie.id)}
@@ -112,16 +130,20 @@ function Home(props) {
 
             <FormControl className={classes.formControl}>
               <InputLabel htmlFor="name_input">Movie Name</InputLabel>
-              <Input id="name_input" />
+              <Input
+                value={movieName}
+                onChange={(e) => setMovieName(e.target.value)}
+                id="name_input"
+              />
             </FormControl>
             <FormControl className={classes.formControl}>
               <InputLabel htmlFor="genre_checkbox">Genres</InputLabel>
               <Select
                 multiple
-                value={selectedNames}
-                // onChange={this.handleChange}
+                value={genre}
+                onChange={(e) => setGenre(e.target.value)}
                 input={<Input id="genre_checkbox" />}
-                // renderValue={selected => selected.join(", ")}
+                renderValue={(selected) => selected.join(", ")}
                 // MenuProps={MenuProps}
               >
                 {genres.map(({ id, genre }) => (
@@ -136,8 +158,10 @@ function Home(props) {
               <InputLabel htmlFor="artists_input">Artists</InputLabel>
               <Select
                 multiple
-                value={selectedArtists}
-                // onChange={this.handleChange}
+                // value={first_name + " " + last_name}
+                onChange={(e) => {
+                  // setFirst_Name()
+                }}
                 input={<Input id="artists_input" />}
                 // renderValue={selected => selected.join(", ")}
                 // MenuProps={MenuProps}
