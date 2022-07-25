@@ -125,7 +125,7 @@ function Header(props) {
     sessionStorage.setItem("access-token", token);
 
     // signin
-    fetch(baseUrl + "/auth/login/", {
+    fetch(baseUrl + "auth/login/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -159,8 +159,8 @@ function Header(props) {
       .then((response) => response.json())
       .then((response) => {
         console.log(response);
-        // sessionStorage.clear(); // clear storage
-        setIsLoggedIn(false); // set logged in to true
+        // sessionStorage.removeItem("access-token") delete token
+        // setIsLoggedIn(false); // set logged in to true
       });
   };
 

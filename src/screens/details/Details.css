@@ -36,3 +36,8 @@
 .detailsTrailer {
   margin-top: 16px !important;
 }
+
+.detailsGridList {
+  flex-wrap: nowrap !important;
+  transform: translateZ(0);
+}

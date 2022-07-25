@@ -32,6 +32,7 @@ const styles = (theme) => ({
 
 function Home(props) {
   const { history, baseUrl } = props;
+  const [movies, setMovies] = useState([]);
   const [upcomingMovies, setUpcomingMovies] = useState([]);
   const [releasedMovies, setReleasedMovies] = useState([]);
   const [artists, setArtists] = useState([]);
@@ -39,8 +40,9 @@ function Home(props) {
 
   const [movieName, setMovieName] = useState("");
   const [genre, setGenre] = useState([]);
-  const [first_name, setFirst_Name] = useState("");
-  const [last_name, setLast_Name] = useState("");
+  const [artist, setArtist] = useState([]);
+  const [dateStart, setDateStart] = useState();
+  const [dateEnd, setDateEnd] = useState();
   const { classes } = props;
 
   useEffect(() => {
@@ -55,8 +57,7 @@ function Home(props) {
         const releasedMovies = response.movies.filter(
           (movie) => movie.status == "RELEASED"
         );
-        console.log(upComingMovies);
-        console.log(releasedMovies);
+        setMovies(response.movies);
         setUpcomingMovies(upComingMovies);
         setReleasedMovies(releasedMovies);
       });
@@ -71,11 +72,35 @@ function Home(props) {
     fetch(baseUrl + "artists/")
       .then((response) => response.json())
       .then((response) => {
-        // console.log(response.artists);
-        // setArtists(response.artists);
-        setArtists([]);
+        console.log(response);
+        setArtists(response.artists);
       });
   }, []);
+
+  const handleFilterMovies = () => {
+    const _startDate = new Date(dateStart);
+    const _endDate = new Date(dateEnd);
+    // filter movies with name and genre
+    const filteredMovies = [];
+
+    for (let i = 0; i < movies.length; i++) {
+      const date = new Date(movies[i].release_date);
+      if (
+        movies[i].title == movieName ||
+        movies[i].genres.includes(...genre) ||
+        (date > _startDate && date < _endDate)
+      ) {
+        for (let j = 0; j < artist.length; j++) {
+          if (movies[i].artists.includes(...artist[j])) {
+            filteredMovies.push(movies[i]);
+          }
+        }
+      }
+    }
+
+    setReleasedMovies(filteredMovies);
+    console.log(filteredMovies);
+  };
 
   return (
     <div>
@@ -87,8 +112,8 @@ function Home(props) {
 
       {/* upcoming movies list */}
       <GridList className="homeGridList" cols={6}>
-        {upcomingMovies.map((movie) => (
-          <GridListTile key={movie.id} className="homeGridList">
+        {upcomingMovies.map((movie, i) => (
+          <GridListTile key={i} className="homeGridList">
             <img
               onClick={() => history.push("/movie/" + movie.id)}
               src={movie.poster_url}
@@ -103,8 +128,8 @@ function Home(props) {
         {/* grid of released movies */}
         <div className="homeReleasedMovies">
           <GridList className="homeReleasedGridListContainer" cols={4}>
-            {releasedMovies.map((movie) => (
-              <GridListTile className="homeReleasedGrid" key={movie.id}>
+            {releasedMovies.map((movie, i) => (
+              <GridListTile key={i} className="homeReleasedGrid">
                 <img
                   onClick={() => history.push("/movie/" + movie.id)}
                   src={movie.poster_url}
@@ -144,7 +169,6 @@ function Home(props) {
                 onChange={(e) => setGenre(e.target.value)}
                 input={<Input id="genre_checkbox" />}
                 renderValue={(selected) => selected.join(", ")}
-                // MenuProps={MenuProps}
               >
                 {genres.map(({ id, genre }) => (
                   <MenuItem key={id} value={genre}>
@@ -158,13 +182,12 @@ function Home(props) {
               <InputLabel htmlFor="artists_input">Artists</InputLabel>
               <Select
                 multiple
-                // value={first_name + " " + last_name}
+                value={artist}
                 onChange={(e) => {
-                  // setFirst_Name()
+                  setArtist(e.target.value);
                 }}
                 input={<Input id="artists_input" />}
-                // renderValue={selected => selected.join(", ")}
-                // MenuProps={MenuProps}
+                renderValue={(selected) => selected.join(", ")}
               >
                 {artists.map((artist) => (
                   <MenuItem
@@ -183,18 +206,29 @@ function Home(props) {
               <InputLabel shrink={true} htmlFor="release_date_input">
                 Release Date Start
               </InputLabel>
-              <Input type="date" id="release_date_input" />
+              <Input
+                value={dateStart}
+                onChange={(e) => setDateStart(e.target.value)}
+                type="date"
+                id="release_date_input"
+              />
             </FormControl>
             <FormControl className={classes.formControl}>
               <InputLabel shrink={true} htmlFor="release_date_end_input">
                 Release Date End
               </InputLabel>
-              <Input type="date" id="release_date_end_input" />
+              <Input
+                value={dateEnd}
+                onChange={(e) => setDateEnd(e.target.value)}
+                type="date"
+                id="release_date_end_input"
+              />
             </FormControl>
             <Button
               className={classes.formControl}
               color="primary"
               variant="contained"
+              onClick={handleFilterMovies}
             >
               APPLY
             </Button>
