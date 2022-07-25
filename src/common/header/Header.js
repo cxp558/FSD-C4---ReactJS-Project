@@ -42,10 +42,10 @@ function Header(props) {
   const [lName, setLName] = useState("");
   const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
-  const [userId, setUserId] = useState(null);
   const [username, setUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [msg, setMsg] = useState("");
+  const [loginMsg, setLoginMsg] = useState("");
   const baseUrl = "/api/v1/";
 
   useEffect(() => {
@@ -130,11 +130,18 @@ function Header(props) {
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "no-cache",
+        "Access-Control-Expose-Headers": "access-token",
         Authorization: "Basic " + sessionStorage.getItem("access-token"),
       },
       body: JSON.stringify(data),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        sessionStorage.setItem(
+          "access-token",
+          response.headers.get("access-token")
+        );
+        return response.json();
+      })
       .then((response) => {
         console.log(response);
         if (response.id) {
@@ -142,6 +149,9 @@ function Header(props) {
           closeModal();
           history.push("/");
           setIsLoggedIn(true); // set logged in to true
+        }
+        if (response.code == "USR-002" || response.code == "USR-003") {
+          setLoginMsg(response.message);
         }
       });
   };
@@ -155,13 +165,12 @@ function Header(props) {
         "Cache-Control": "no-cache",
         Authorization: "Bearer " + sessionStorage.getItem("access-token"),
       },
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response);
-        // sessionStorage.removeItem("access-token") delete token
-        // setIsLoggedIn(false); // set logged in to true
-      });
+    }).then((response) => {
+      if (response.ok) {
+        sessionStorage.removeItem("access-token"); //delete token
+        setIsLoggedIn(false); // set logged in to true
+      }
+    });
   };
 
   const checkField = (field) => {
@@ -246,6 +255,7 @@ function Header(props) {
                   id="password_login_input"
                 />
               </FormControl>
+              {loginMsg && <Typography>{loginMsg}</Typography>}
               <Button onClick={handleLogin} color="primary" variant="contained">
                 Login
               </Button>
