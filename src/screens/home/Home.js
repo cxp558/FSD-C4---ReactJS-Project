@@ -17,6 +17,7 @@ import {
   MenuItem,
   Checkbox,
   ListItemText,
+  TextField,
 } from "@material-ui/core";
 
 const styles = (theme) => ({
@@ -43,6 +44,7 @@ function Home(props) {
   const [artist, setArtist] = useState([]);
   const [dateStart, setDateStart] = useState();
   const [dateEnd, setDateEnd] = useState();
+  const defaultDate = undefined;
   const { classes } = props;
 
   useEffect(() => {
@@ -80,42 +82,69 @@ function Home(props) {
   const handleFilterMovies = () => {
     const rel_movies = movies.filter((movie) => movie.status === "RELEASED");
 
-    if (
-      !movieName &&
-      genre.length === 0 &&
-      artist.length === 0 &&
-      !dateStart &&
-      !dateEnd
-    ) {
-      setReleasedMovies(rel_movies);
-    } else {
-      const filteredMovies = [];
+    const filteredMovies = [];
 
-      for (let i = 0; i < rel_movies.length; i++) {
-        const date = rel_movies[i].release_date;
-        if (
-          rel_movies[i].title
-            .trim()
-            .toLowerCase()
-            .includes(movieName.toLowerCase()) ||
-          checkGenre(rel_movies[i].genres) ||
-          checkDate(dateStart, dateEnd, date)
-        ) {
-          filteredMovies.push(rel_movies[i]);
-        }
+    for (let i = 0; i < rel_movies.length; i++) {
+      const date = rel_movies[i].release_date;
+      console.log(checkDate(dateStart, dateEnd, date));
+      if (
+        checkTitle(rel_movies[i], movieName, filteredMovies) &&
+        checkGenres(rel_movies[i], genre, filteredMovies) &&
+        checkActors(rel_movies[i], artist, filteredMovies) &&
+        checkDate(dateStart, dateEnd, date)
+      ) {
+        filteredMovies.push(rel_movies[i]);
       }
-
-      setReleasedMovies(filteredMovies);
-      console.log(filteredMovies);
     }
 
-    // reset fields
+    setReleasedMovies(filteredMovies);
+
     setMovieName("");
     setGenre([]);
     setArtist([]);
+    setDateStart(defaultDate);
+    setDateEnd(defaultDate);
   };
 
+  const checkTitle = (movie, movieName, filteredMovies) => {
+    if (!movieName) return true;
+    if (
+      movie.title.trim().toLowerCase().includes(movieName.toLowerCase()) &&
+      !filteredMovies.includes(movie)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const checkGenres = (movie, genre, filteredMovies) => {
+    if (genre.length <= 0) return true;
+    for (let j = 0; j < genre.length; j++) {
+      if (movie.genres.includes(genre[j]) && !filteredMovies.includes(movie)) {
+        return true;
+      }
+    }
+    return false;
+  };
+  const checkActors = (movie, artist, filteredMovies) => {
+    if (artist.length <= 0) return true;
+    const actors = [];
+    for (let u = 0; u < movie.artists.length; u++) {
+      actors.push(
+        movie.artists[u].first_name + " " + movie.artists[u].last_name
+      );
+    }
+    for (let j = 0; j < artist.length; j++) {
+      if (actors.includes(artist[j]) && !filteredMovies.includes(movie)) {
+        return true;
+      }
+    }
+    return false;
+  };
   const checkDate = (dateFrom, dateTo, dateCheck) => {
+    console.log(dateFrom);
+    if (dateFrom === defaultDate && dateTo === defaultDate) return true;
     if (dateFrom && dateTo && dateCheck) {
       var d1 = dateFrom.split("-");
       var d2 = dateTo.split("-");
@@ -127,18 +156,6 @@ function Home(props) {
 
       return check > from && check < to;
     }
-    return false;
-  };
-
-  const checkGenre = (movieGenres) => {
-    if (genre.length > 0) {
-      for (let i = 0; i < movieGenres.length; i++) {
-        for (let j = 0; j < genre.length; j++) {
-          if (genre[j] === movieGenres[i]) return true;
-        }
-      }
-    }
-
     return false;
   };
 
@@ -154,11 +171,7 @@ function Home(props) {
       <GridList className="homeGridList" cols={6}>
         {upcomingMovies.map((movie, i) => (
           <GridListTile key={i} className="homeGridList">
-            <img
-              onClick={() => history.push("/movie/" + movie.id)}
-              src={movie.poster_url}
-              alt={movie.title}
-            />
+            <img src={movie.poster_url} alt={movie.title} />
             <GridListTileBar title={movie.title} />
           </GridListTile>
         ))}
@@ -249,25 +262,27 @@ function Home(props) {
               </Select>
             </FormControl>
             <FormControl className={classes.formControl}>
-              <InputLabel shrink={true} htmlFor="release_date_input">
-                Release Date Start
-              </InputLabel>
-              <Input
+              <TextField
+                id="date_start"
+                label="Release Date Start"
+                type="date"
                 value={dateStart}
                 onChange={(e) => setDateStart(e.target.value)}
-                type="date"
-                id="release_date_input"
+                InputLabelProps={{
+                  shrink: true,
+                }}
               />
             </FormControl>
             <FormControl className={classes.formControl}>
-              <InputLabel shrink={true} htmlFor="release_date_end_input">
-                Release Date End
-              </InputLabel>
-              <Input
+              <TextField
+                id="date_end"
+                label="Release Date End"
+                type="date"
                 value={dateEnd}
                 onChange={(e) => setDateEnd(e.target.value)}
-                type="date"
-                id="release_date_end_input"
+                InputLabelProps={{
+                  shrink: true,
+                }}
               />
             </FormControl>
             <Button
