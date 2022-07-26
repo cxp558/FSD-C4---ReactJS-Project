@@ -10,38 +10,11 @@ import {
 } from "@material-ui/core";
 import "./Details.css";
 
-const artists = [
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-  {
-    poster_url:
-      "https://assets.mubicdn.net/images/notebook/post_images/19893/images-w1400.jpg?1449196747",
-    title: "The Amazing Movie Part 1",
-    author: "author",
-  },
-];
-
 const Details = (props) => {
   const { history, baseUrl, match } = props;
   const [movie, setMovie] = useState({});
   const [rating, setRating] = useState(0);
-  const [stars, setStars] = useState([1, 1, 1, 0, 0]);
+  const [stars, setStars] = useState([0, 0, 0, 0, 0]);
 
   useEffect(() => {
     // get movies
@@ -63,11 +36,12 @@ const Details = (props) => {
 
     setStars(newStars);
     setRating(coloredStars + 1);
+    console.log(rating);
   };
 
   return (
     <div>
-      <Header showBookShow />
+      <Header showBookShow id={match.params.id} />
       <Typography className="backBtn" onClick={() => history.push("/")}>
         {"<"} Back to Home
       </Typography>
@@ -133,6 +107,9 @@ const Details = (props) => {
                   />
                 </GridListTile>
               ))}
+            {movie.artists && movie.artists.length === 0 && (
+              <Typography>No artists</Typography>
+            )}
           </GridList>
         </div>
       </div>

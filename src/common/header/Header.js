@@ -33,7 +33,7 @@ const modalCustomStyles = {
 };
 
 function Header(props) {
-  const { showBookShow, history } = props;
+  const { showBookShow, id, history } = props;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState(0);
@@ -71,7 +71,7 @@ function Header(props) {
   const handleBookShow = () => {
     if (isLoggedIn) {
       // go to book show page
-      history.push("/bookshow/2");
+      history.push("/bookshow/" + id);
     } else {
       openModal();
     }
@@ -106,7 +106,7 @@ function Header(props) {
           console.log(response);
           if (response.id && response.status) {
             setMsg("Registration Successful. Please Login!"); // display message
-          } else if (response.code == "USR-009") {
+          } else if (response.code === "USR-009") {
             setMsg("User email already exists");
           }
         });
@@ -150,7 +150,7 @@ function Header(props) {
           history.push("/");
           setIsLoggedIn(true); // set logged in to true
         }
-        if (response.code == "USR-002" || response.code == "USR-003") {
+        if (response.code === "USR-002" || response.code === "USR-003") {
           setLoginMsg(response.message);
         }
       });
@@ -189,7 +189,7 @@ function Header(props) {
         <img
           src={require("../../assets/logo.svg")}
           className="logo"
-          alt="no image"
+          alt="logo"
         />
 
         <div className="btns_container">
@@ -225,6 +225,7 @@ function Header(props) {
         onRequestClose={closeModal}
         contentLabel="Example Modal"
         style={modalCustomStyles}
+        ariaHideApp={false}
       >
         <div>
           <Tabs

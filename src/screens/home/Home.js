@@ -52,10 +52,10 @@ function Home(props) {
       .then((response) => {
         // console.log(response);
         const upComingMovies = response.movies.filter(
-          (movie) => movie.status == "PUBLISHED"
+          (movie) => movie.status === "PUBLISHED"
         );
         const releasedMovies = response.movies.filter(
-          (movie) => movie.status == "RELEASED"
+          (movie) => movie.status === "RELEASED"
         );
         setMovies(response.movies);
         setUpcomingMovies(upComingMovies);
@@ -72,34 +72,74 @@ function Home(props) {
     fetch(baseUrl + "artists/")
       .then((response) => response.json())
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         setArtists(response.artists);
       });
   }, []);
 
   const handleFilterMovies = () => {
-    const _startDate = new Date(dateStart);
-    const _endDate = new Date(dateEnd);
-    // filter movies with name and genre
-    const filteredMovies = [];
+    const rel_movies = movies.filter((movie) => movie.status === "RELEASED");
 
-    for (let i = 0; i < movies.length; i++) {
-      const date = new Date(movies[i].release_date);
-      if (
-        movies[i].title == movieName ||
-        movies[i].genres.includes(...genre) ||
-        (date > _startDate && date < _endDate)
-      ) {
-        for (let j = 0; j < artist.length; j++) {
-          if (movies[i].artists.includes(...artist[j])) {
-            filteredMovies.push(movies[i]);
-          }
+    if (
+      !movieName &&
+      genre.length === 0 &&
+      artist.length === 0 &&
+      !dateStart &&
+      !dateEnd
+    ) {
+      setReleasedMovies(rel_movies);
+    } else {
+      const filteredMovies = [];
+
+      for (let i = 0; i < rel_movies.length; i++) {
+        const date = rel_movies[i].release_date;
+        if (
+          rel_movies[i].title
+            .trim()
+            .toLowerCase()
+            .includes(movieName.toLowerCase()) ||
+          checkGenre(rel_movies[i].genres) ||
+          checkDate(dateStart, dateEnd, date)
+        ) {
+          filteredMovies.push(rel_movies[i]);
+        }
+      }
+
+      setReleasedMovies(filteredMovies);
+      console.log(filteredMovies);
+    }
+
+    // reset fields
+    setMovieName("");
+    setGenre([]);
+    setArtist([]);
+  };
+
+  const checkDate = (dateFrom, dateTo, dateCheck) => {
+    if (dateFrom && dateTo && dateCheck) {
+      var d1 = dateFrom.split("-");
+      var d2 = dateTo.split("-");
+      var c = dateCheck.split("-");
+
+      var from = new Date(d1[0], parseInt(d1[1]) - 1, d1[2]); // -1 because months are from 0 to 11
+      var to = new Date(d2[0], parseInt(d2[1]) - 1, d2[2]);
+      var check = new Date(c[0], parseInt(c[1]) - 1, c[2]);
+
+      return check > from && check < to;
+    }
+    return false;
+  };
+
+  const checkGenre = (movieGenres) => {
+    if (genre.length > 0) {
+      for (let i = 0; i < movieGenres.length; i++) {
+        for (let j = 0; j < genre.length; j++) {
+          if (genre[j] === movieGenres[i]) return true;
         }
       }
     }
 
-    setReleasedMovies(filteredMovies);
-    console.log(filteredMovies);
+    return false;
   };
 
   return (
@@ -138,11 +178,17 @@ function Home(props) {
                 />
                 <GridListTileBar
                   title={movie.title}
-                  subtitle={<span>Released Date: {movie.release_date}</span>}
+                  subtitle={
+                    <span>
+                      Released Date:{" "}
+                      {new Date(movie.release_date).toDateString()}
+                    </span>
+                  }
                 />
               </GridListTile>
             ))}
           </GridList>
+          {releasedMovies.length === 0 && <h1>No Released Movie</h1>}
         </div>
         {/* filters */}
         <div className="homeFilters">
