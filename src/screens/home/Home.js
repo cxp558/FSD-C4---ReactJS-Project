@@ -42,13 +42,13 @@ function Home(props) {
   const [movieName, setMovieName] = useState("");
   const [genre, setGenre] = useState([]);
   const [artist, setArtist] = useState([]);
-  const [dateStart, setDateStart] = useState();
-  const [dateEnd, setDateEnd] = useState();
-  const defaultDate = undefined;
+  const defaultDate = "";
+  const [dateStart, setDateStart] = useState(defaultDate);
+  const [dateEnd, setDateEnd] = useState(defaultDate);
   const { classes } = props;
 
   useEffect(() => {
-    // get movies
+    // get movies request
     fetch(baseUrl + "movies/?page=1&limit=17")
       .then((response) => response.json())
       .then((response) => {
@@ -63,14 +63,14 @@ function Home(props) {
         setUpcomingMovies(upComingMovies);
         setReleasedMovies(releasedMovies);
       });
-    // get genres
+    // get genres request
     fetch(baseUrl + "genres/")
       .then((response) => response.json())
       .then((response) => {
         // console.log(response.genres);
         setGenres(response.genres);
       });
-    // get artists
+    // get artists request
     fetch(baseUrl + "artists/")
       .then((response) => response.json())
       .then((response) => {
@@ -79,14 +79,14 @@ function Home(props) {
       });
   }, []);
 
+  // filter movies
   const handleFilterMovies = () => {
+    // store initial released movies
     const rel_movies = movies.filter((movie) => movie.status === "RELEASED");
-
     const filteredMovies = [];
 
     for (let i = 0; i < rel_movies.length; i++) {
       const date = rel_movies[i].release_date;
-      console.log(checkDate(dateStart, dateEnd, date));
       if (
         checkTitle(rel_movies[i], movieName, filteredMovies) &&
         checkGenres(rel_movies[i], genre, filteredMovies) &&
@@ -99,6 +99,7 @@ function Home(props) {
 
     setReleasedMovies(filteredMovies);
 
+    // reset fields
     setMovieName("");
     setGenre([]);
     setArtist([]);
@@ -106,6 +107,7 @@ function Home(props) {
     setDateEnd(defaultDate);
   };
 
+  // search for title match
   const checkTitle = (movie, movieName, filteredMovies) => {
     if (!movieName) return true;
     if (
@@ -117,7 +119,7 @@ function Home(props) {
       return false;
     }
   };
-
+  // search for genres matches
   const checkGenres = (movie, genre, filteredMovies) => {
     if (genre.length <= 0) return true;
     for (let j = 0; j < genre.length; j++) {
@@ -127,6 +129,7 @@ function Home(props) {
     }
     return false;
   };
+  // search for artists matches
   const checkActors = (movie, artist, filteredMovies) => {
     if (artist.length <= 0) return true;
     const actors = [];
@@ -142,17 +145,17 @@ function Home(props) {
     }
     return false;
   };
+  // check if date of movie falls between start and end date
   const checkDate = (dateFrom, dateTo, dateCheck) => {
-    console.log(dateFrom);
     if (dateFrom === defaultDate && dateTo === defaultDate) return true;
     if (dateFrom && dateTo && dateCheck) {
       var d1 = dateFrom.split("-");
       var d2 = dateTo.split("-");
       var c = dateCheck.split("-");
 
-      var from = new Date(d1[0], parseInt(d1[1]) - 1, d1[2]); // -1 because months are from 0 to 11
-      var to = new Date(d2[0], parseInt(d2[1]) - 1, d2[2]);
-      var check = new Date(c[0], parseInt(c[1]) - 1, c[2]);
+      var from = new Date(d1[0], parseInt(d1[1], 10) - 1, d1[2]); // -1 because months are from 0 to 11
+      var to = new Date(d2[0], parseInt(d2[1], 10) - 1, d2[2]);
+      var check = new Date(c[0], parseInt(c[1], 10) - 1, c[2]);
 
       return check > from && check < to;
     }

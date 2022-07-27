@@ -17,15 +17,15 @@ const Details = (props) => {
   const [stars, setStars] = useState([0, 0, 0, 0, 0]);
 
   useEffect(() => {
-    // get movies
+    // get movie request
     fetch(baseUrl + "movies/" + match.params.id)
       .then((response) => response.json())
       .then((movie) => {
-        console.log(movie);
         setMovie(movie);
       });
   }, []);
 
+  // handle rating
   const handleRating = (i) => {
     const coloredStars = i;
     const newStars = [...stars];

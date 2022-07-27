@@ -13,7 +13,6 @@
   padding: 8px;
   font-size: 1rem;
   text-align: center;
-  /* width: 100%; */
 }
 .homeImg:hover {
   cursor: pointer;
@@ -23,14 +22,13 @@
 }
 .homeReleasedMoviesContainer {
   display: flex;
-  width: 100%;
 }
 .homeReleasedMovies {
-  width: 76%;
+  flex: 0.76;
   margin: 16px;
 }
 .homeFilters {
-  width: 24%;
+  flex: 0.24;
   margin: 16px;
 }
 

@@ -49,6 +49,7 @@ function Header(props) {
   const baseUrl = "/api/v1/";
 
   useEffect(() => {
+    // initial check if there's a sesion in storage
     if (sessionStorage.getItem("access-token")) {
       setIsLoggedIn(true);
     } else {
@@ -77,6 +78,7 @@ function Header(props) {
     }
   };
 
+  // register user
   const handleRegister = () => {
     const data = {
       email_address: email,
@@ -85,6 +87,7 @@ function Header(props) {
       mobile_number: number,
       password: password,
     };
+    // only signup if all fields are available
     if (
       email.trim() &&
       fName.trim() &&
@@ -92,7 +95,7 @@ function Header(props) {
       number.trim() &&
       password.trim()
     ) {
-      // signup
+      // signup request
       fetch(baseUrl + "signup/", {
         method: "POST",
         headers: {
@@ -113,51 +116,58 @@ function Header(props) {
     }
   };
 
+  // login user
   const handleLogin = () => {
     const data = {
       username: username,
       password: loginPassword,
     };
-    // encode email:password with base64
-    const token = Buffer.from(username + ":" + loginPassword).toString(
-      "base64"
-    );
-    sessionStorage.setItem("access-token", token);
 
-    // signin
-    fetch(baseUrl + "auth/login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-        "Access-Control-Expose-Headers": "access-token",
-        Authorization: "Basic " + sessionStorage.getItem("access-token"),
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        sessionStorage.setItem(
-          "access-token",
-          response.headers.get("access-token")
-        );
-        return response.json();
+    // only login if fields are available
+    if (loginPassword.trim() && username.trim()) {
+      // encode email:password with base64
+      const token = Buffer.from(username + ":" + loginPassword).toString(
+        "base64"
+      );
+      // store token in storage
+      sessionStorage.setItem("access-token", token);
+
+      // signin request
+      fetch(baseUrl + "auth/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+          "Access-Control-Expose-Headers": "access-token",
+          Authorization: "Basic " + sessionStorage.getItem("access-token"),
+        },
+        body: JSON.stringify(data),
       })
-      .then((response) => {
-        console.log(response);
-        if (response.id) {
-          // close modal and go to home page
-          closeModal();
-          history.push("/");
-          setIsLoggedIn(true); // set logged in to true
-        }
-        if (response.code === "USR-002" || response.code === "USR-003") {
-          setLoginMsg(response.message);
-        }
-      });
+        .then((response) => {
+          sessionStorage.setItem(
+            "access-token",
+            response.headers.get("access-token")
+          );
+          return response.json();
+        })
+        .then((response) => {
+          console.log(response);
+          if (response.id) {
+            // close modal and go to home page
+            closeModal();
+            history.push("/");
+            setIsLoggedIn(true); // set logged in to true
+          }
+          if (response.code === "USR-002" || response.code === "USR-003") {
+            setLoginMsg(response.message);
+          }
+        });
+    }
   };
 
+  // logout user
   const handleLogout = () => {
-    // signin
+    // logout request
     fetch(baseUrl + "auth/logout/", {
       method: "POST",
       headers: {
@@ -173,11 +183,12 @@ function Header(props) {
     });
   };
 
+  // validator function
   const checkField = (field) => {
     return (
       !field.trim() && (
         <FormHelperText>
-          <span className="red">Required</span>
+          <span className="red">required</span>
         </FormHelperText>
       )
     );
@@ -246,6 +257,7 @@ function Header(props) {
                   type="email"
                   id="email_login_input"
                 />
+                {checkField(username)}
               </FormControl>
               <FormControl required>
                 <InputLabel htmlFor="password_login_input">Password</InputLabel>
@@ -255,6 +267,7 @@ function Header(props) {
                   type="password"
                   id="password_login_input"
                 />
+                {checkField(loginPassword)}
               </FormControl>
               {loginMsg && <Typography>{loginMsg}</Typography>}
               <Button onClick={handleLogin} color="primary" variant="contained">
