@@ -179,6 +179,7 @@ function Header(props) {
       if (response.ok) {
         sessionStorage.removeItem("access-token"); //delete token
         setIsLoggedIn(false); // set logged in to true
+        history.push("/"); // go back to home
       }
     });
   };
